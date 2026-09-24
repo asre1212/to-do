@@ -26,6 +26,10 @@ const notesTitle = document.querySelector("#notesTitle");
 const notesInput = document.querySelector("#notesInput");
 const saveState = document.querySelector("#saveState");
 const saveNotes = document.querySelector("#saveNotes");
+const exportData = document.querySelector("#exportData");
+const importData = document.querySelector("#importData");
+const importFile = document.querySelector("#importFile");
+const backupStatus = document.querySelector("#backupStatus");
 
 dateLine.textContent = new Intl.DateTimeFormat(undefined, {
   weekday: "long",
@@ -74,6 +78,53 @@ saveNotes.addEventListener("click", () => {
   state[activeCategory].notes = notesInput.value;
   persist();
   setSaveStatus("Saved");
+});
+
+exportData.addEventListener("click", () => {
+  const backup = {
+    app: "minimal-todo",
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    categories,
+    state,
+  };
+  const blob = new Blob([JSON.stringify(backup, null, 2)], {
+    type: "application/json",
+  });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+
+  link.href = url;
+  link.download = `to-do-backup-${formatBackupDate(new Date())}.json`;
+  document.body.append(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+  setBackupStatus("Backup exported");
+});
+
+importData.addEventListener("click", () => {
+  importFile.click();
+});
+
+importFile.addEventListener("change", async () => {
+  const [file] = importFile.files;
+
+  if (!file) {
+    return;
+  }
+
+  try {
+    const imported = JSON.parse(await file.text());
+    state = normalizeImportedState(imported);
+    persist();
+    render();
+    setBackupStatus("Backup imported");
+  } catch {
+    setBackupStatus("Could not import that file");
+  } finally {
+    importFile.value = "";
+  }
 });
 
 function render() {
@@ -142,6 +193,50 @@ function persist() {
   localStorage.setItem(storageKey, JSON.stringify(state));
 }
 
+function normalizeImportedState(imported) {
+  const source = imported?.state ?? imported;
+
+  if (!source || typeof source !== "object") {
+    throw new Error("Invalid backup");
+  }
+
+  return Object.fromEntries(
+    Object.keys(categories).map((key) => [
+      key,
+      {
+        tasks: normalizeTasks(source[key]?.tasks),
+        notes: typeof source[key]?.notes === "string" ? source[key].notes : "",
+      },
+    ]),
+  );
+}
+
+function normalizeTasks(tasks) {
+  if (!Array.isArray(tasks)) {
+    return [];
+  }
+
+  return tasks
+    .filter((task) => typeof task?.label === "string" && task.label.trim())
+    .map((task) => ({
+      id: typeof task.id === "string" ? task.id : makeId(),
+      label: task.label.trim().slice(0, 120),
+      createdAt: Number.isFinite(task.createdAt) ? task.createdAt : Date.now(),
+    }));
+}
+
+function formatBackupDate(date) {
+  return date.toISOString().slice(0, 10);
+}
+
+function setBackupStatus(message) {
+  backupStatus.textContent = message;
+  window.clearTimeout(setBackupStatus.timer);
+  setBackupStatus.timer = window.setTimeout(() => {
+    backupStatus.textContent = "Saved on this device";
+  }, 2600);
+}
+
 function makeId() {
   if (globalThis.crypto?.randomUUID) {
     return globalThis.crypto.randomUUID();
@@ -160,3 +255,11 @@ function cloneDefaultState() {
 }
 
 render();
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("sw.js").catch(() => {
+      setBackupStatus("Offline install unavailable");
+    });
+  });
+}

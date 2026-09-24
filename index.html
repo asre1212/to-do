@@ -3,7 +3,14 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f7f5f0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="To Do" />
     <title>To Do</title>
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
+    <link rel="icon" href="assets/icon-192.png" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
@@ -13,7 +20,15 @@
           <p class="eyebrow">quiet list</p>
           <h1>To Do</h1>
         </div>
-        <p class="date-line" id="dateLine"></p>
+        <div class="header-tools">
+          <p class="date-line" id="dateLine"></p>
+          <div class="backup-actions" aria-label="Backup actions">
+            <button class="backup-button" id="exportData" type="button">Export</button>
+            <button class="backup-button" id="importData" type="button">Import</button>
+            <input id="importFile" type="file" accept="application/json,.json" hidden />
+          </div>
+          <p class="backup-status" id="backupStatus">Saved on this device</p>
+        </div>
       </header>
 
       <nav class="tabs" aria-label="Task categories">

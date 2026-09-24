@@ -84,6 +84,39 @@ h2 {
   font-size: 0.95rem;
 }
 
+.header-tools {
+  display: grid;
+  justify-items: end;
+  gap: 8px;
+}
+
+.backup-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.backup-button {
+  min-height: 36px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface-strong);
+  color: var(--ink);
+  padding: 7px 12px;
+  font-size: 0.86rem;
+}
+
+.backup-button:hover {
+  border-color: var(--accent);
+}
+
+.backup-status {
+  min-height: 18px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+  text-align: right;
+}
+
 .tabs {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -330,7 +363,15 @@ h2 {
   }
 
   .date-line {
-    margin-top: 12px;
+    margin: 12px 0 0;
+  }
+
+  .header-tools {
+    justify-items: start;
+  }
+
+  .backup-status {
+    text-align: left;
   }
 
   .tabs,
