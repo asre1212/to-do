@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>To Do</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="app-header">
+        <div>
+          <p class="eyebrow">quiet list</p>
+          <h1>To Do</h1>
+        </div>
+        <p class="date-line" id="dateLine"></p>
+      </header>
+
+      <nav class="tabs" aria-label="Task categories">
+        <button class="tab is-active" type="button" data-category="week">
+          <span>This week</span>
+          <strong id="count-week">0</strong>
+        </button>
+        <button class="tab" type="button" data-category="month">
+          <span>This month</span>
+          <strong id="count-month">0</strong>
+        </button>
+        <button class="tab" type="button" data-category="general">
+          <span>General</span>
+          <strong id="count-general">0</strong>
+        </button>
+        <button class="tab" type="button" data-category="aspirational">
+          <span>Aspirational</span>
+          <strong id="count-aspirational">0</strong>
+        </button>
+      </nav>
+
+      <section class="workspace" aria-live="polite">
+        <div class="list-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="section-label">tasks</p>
+              <h2 id="categoryTitle">This week</h2>
+            </div>
+          </div>
+
+          <form class="task-form" id="taskForm" autocomplete="off">
+            <label class="visually-hidden" for="taskInput">New task</label>
+            <input id="taskInput" name="task" type="text" placeholder="Add a task..." maxlength="120" />
+            <button type="submit" aria-label="Add task">+</button>
+          </form>
+
+          <ul class="task-list" id="taskList"></ul>
+          <p class="empty-state" id="emptyState">Nothing here yet.</p>
+        </div>
+
+        <aside class="notes-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="section-label">notes</p>
+              <h2 id="notesTitle">This week notes</h2>
+            </div>
+            <div class="notes-actions">
+              <span class="save-state" id="saveState">Saved</span>
+              <button class="save-button" id="saveNotes" type="button">Save</button>
+            </div>
+          </div>
+          <label class="visually-hidden" for="notesInput">Category notes</label>
+          <textarea id="notesInput" placeholder="Save anything useful for this category..."></textarea>
+        </aside>
+      </section>
+    </main>
+
+    <template id="taskTemplate">
+      <li class="task-item">
+        <label>
+          <input type="checkbox" />
+          <span></span>
+        </label>
+      </li>
+    </template>
+
+    <script src="app.js"></script>
+  </body>
+</html>
