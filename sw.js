@@ -1,4 +1,4 @@
-const CACHE_NAME = "to-do-pwa-v1";
+const CACHE_NAME = "to-do-pwa-v2";
 const APP_ASSETS = [
   "./",
   "./index.html",
@@ -24,7 +24,7 @@ self.addEventListener("activate", (event) => {
       .keys()
       .then((keys) =>
         Promise.all(
-          keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key)),
+          keys.filter((key) => key.startsWith("to-do-pwa-") && key !== CACHE_NAME).map((key) => caches.delete(key)),
         ),
       ),
   );
